@@ -20,7 +20,7 @@ namespace RglGame
         [STAThread]
         static void Main()
         {
-            World.GenerateRooms(8);
+            World.GenerateMap();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

@@ -5,56 +5,45 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Graph;
 
 namespace RglGame
 {
     public static class World
     {
-        public static List<(int,int)> ExistingRoomsTuples = new List<(int, int)> { (0,0) };
-        public static new Dictionary<(int, int), Room> Rooms = new Dictionary<(int, int), Room>();
-        
-        public static void GenerateRooms(int roomNumber)
+        public static List<Room> Rooms = new List<Room> { new Room(0) };
+        public static void GenerateRooms(int RoomsCount)
         {
-            Rooms.Add((0, 0), new Room(0, 0));
-            for (int i = 0; i < roomNumber; i++)
+            var rnd = new Random();
+            for (int i = 0; i < RoomsCount; i++)
             {
-                var vacantRooms = new HashSet<(int, int)>();
-                foreach (var currentRoom in Rooms.Keys)
+                var vacantRooms = new HashSet<int>();
+                foreach (var currentRoom in Rooms)
                 {
-                    for (int dx = -1; dx < 2; dx++)
-                        for (int dy = -1; dy < 2; dy++)
-                            if (dx != dy && dx * -1 != dy)
-                                if (!Rooms.ContainsKey((currentRoom.Item1 + dx, currentRoom.Item2 + dy)))
-                                    vacantRooms.Add((currentRoom.Item1 + dx, currentRoom.Item2 + dy));
-
+                    foreach (var d in new int[] { 1, -1, 10, -10 })
+                    {
+                        if (!Rooms.Select(room => room.coord).Contains(currentRoom.coord + d))
+                            vacantRooms.Add(currentRoom.coord + d);
+                    }
                 }
-                InitRooms(vacantRooms);
+                Rooms.Add(new Room(vacantRooms.ElementAt(rnd.Next(vacantRooms.Count))));
             }
         }
-        public static void InitRooms(HashSet<(int,int)> vacantRooms)
+        public static void GenerateMap()
         {
-            Random rnd = new Random();
-            var rndTuple = vacantRooms.ElementAt(rnd.Next(0, vacantRooms.Count));
-            Rooms.Add((rndTuple.Item1, rndTuple.Item2) , new Room(rndTuple.Item1, rndTuple.Item2));
-            
+            GenerateRooms(8);
+            ConnectRooms();
+            Player.CurrentRoom = Rooms[0];
         }
-        //public static void GenerateDoors()
-        //{
-        //    foreach (var t in Rooms.Keys)
-        //        for (int dx = -1; dx < 2; dx++)
-        //            for (int dy = -1; dy < 2; dy++)
-        //                if (dx != dy && dx * -1 != dy)
-        //                    if (Rooms.ContainsKey((t.Item1 + dx, t.Item2 + dy)))
-        //                    {
-        //                        Rooms[(t.Item1, t.Item2)].doors.Add(new Door { To = (t.Item1 + dx, t.Item2 + dy)});
-        //                    }                            
-        //}
+        public static void ConnectRooms()
+        {
+            foreach (var currentRoom in Rooms)
+                foreach (var d in new int[] { 1, -1, 10, -10 })
+                {
+                    if (Rooms.Select(room => room.coord).Contains(currentRoom.coord + d))
+                        currentRoom.Connect(currentRoom.coord + d);
+                }
+        }
+    };
 
-    };
-    public class Door
-    {
-        public (int,int) To;
-        
-        //относительно центра комнаты
-    };
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace RglGame
 {
@@ -16,7 +17,7 @@ namespace RglGame
         {
             DoubleBuffered = true;
             var pen = new Pen(Color.Black);
-
+            var KeyList = new List<KeyEventArgs>();
             ClientSize = new Size(1280, 720);
             var centerX = 1280 / 2;
             var centerY = 720 / 2;
@@ -24,7 +25,7 @@ namespace RglGame
             var time = 0;
             var timer = new Timer
             {
-                Interval = 40,
+                Interval = 66,
             };
             timer.Tick += (sender, args) =>
             {
@@ -32,46 +33,44 @@ namespace RglGame
                 Invalidate();
             };
             timer.Start();
+            KeyDown += Form1_KeyDown;
+            KeyUp += Form1_KeyUp;
             Paint += (sender, args) =>
             {
                 for (int i = 0; i < time; i++)
                 {
+                    Player.CurrentRoom.CheckCollision();
                     cameraCenter.X = centerX - Player.position.X;
                     cameraCenter.Y = centerY - Player.position.Y;
                     args.Graphics.TranslateTransform(centerX,centerY);
                     args.Graphics.FillEllipse(Brushes.Blue, Player.position.X, Player.position.Y, 50, 50);
-                    DrawRoom(args , pen);
+                    DrawRoom(args , pen, Player.CurrentRoom);
                     args.Graphics.ResetTransform();
-
                     args.Graphics.DrawString(Player.position.X.ToString() + " " + Player.position.Y.ToString(), new Font("Arial", 16), Brushes.Black, 0, 270);
+                    
                 }
             };
         }
-        protected override void OnKeyDown(KeyEventArgs e)
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            base.OnKeyDown(e);
-            HandleKey(e.KeyCode, true);
+            throw new NotImplementedException();
         }
 
-        private void HandleKey(Keys e, bool down)
-        {
-            if (e == Keys.A) Player.MoveLeft();
-            if (e == Keys.D) Player.MoveRight();
-            if (e == Keys.W) Player.MoveUp();
-            if (e == Keys.S) Player.MoveDown();
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {   
+            if (e.KeyCode == Keys.W) Player.MoveUp();
+            if (e.KeyCode == Keys.S) Player.MoveDown();
         }
-        public void DrawDoors()
+        public void DrawRoom(PaintEventArgs args, Pen pen, Room currentRoom)
         {
-
+            args.Graphics.DrawRectangle(pen, currentRoom.bounds);
+            DrawDoors(args, pen, currentRoom);
         }
-        public void DrawRoom(PaintEventArgs args, Pen pen)
+        public void DrawDoors(PaintEventArgs args, Pen pen, Room currentRoom)
         {
-            args.Graphics.DrawRectangle(pen,-550,-310, 1100, 620);
+            foreach (var door in currentRoom.Doors)
+                args.Graphics.DrawRectangle(pen, door.Item1);
         }
-        //public void DrawWorld()
-        //{
-        //    foreach(var e in World.ExistingRooms)
-
-        //}
     }
 }
