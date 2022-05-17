@@ -65,48 +65,6 @@ namespace RglGame
         }
     }
 
-    public class RangeEnemy : Enemy
-    {
-        public int wallDirection;
-        public int attackCooldown;
-        public RangeEnemy(Rectangle hitbox, int wallDirection)
-        {
-            this.hitbox = hitbox;
-            health = 2;
-            speed = 3;
-            this.wallDirection = wallDirection;
-        }
-
-        public override void Move()
-        {
-            if (hitbox.X == Player.hitbox.X)
-            {
-                Attack();
-            }
-            else
-                MoveX(hitbox.X.CompareTo(Player.hitbox.X) * speed);
-            if (hitbox.Y == Player.hitbox.Y)
-            {
-                Attack();
-            }
-            else
-                MoveY(hitbox.Y.CompareTo(Player.hitbox.Y) * speed);
-
-        }
-        public int GetRandom(int num)
-        {
-            var rnd = new Random();
-            return rnd.Next(num);
-        }
-        public void Attack()
-        {
-            var attackRange = new Rectangle();
-            if (Player.CurrentRoom.bounds.Top > hitbox.X)
-                attackRange = new Rectangle(Player.hitbox.X, Player.CurrentRoom.bounds.Top, Player.hitbox.Width / 2, Player.CurrentRoom.bounds.Height);
-            
-        }
-    }
-
     public class SpiderEnemy : Enemy
     {
         public int moveTiming;
