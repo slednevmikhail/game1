@@ -1,4 +1,5 @@
-﻿namespace RglGame
+﻿using System.Linq;
+namespace RglGame
 {
     public static class KeyboardControl
     {
@@ -7,16 +8,36 @@
         public static bool IsDdown;
         public static bool IsSdown;
 
-        public static void GetMoveDirection()
+        public static bool IsRightDown;
+        public static bool IsLeftDown;
+        public static bool IsUpDown;
+        public static bool IsBotDown;
+        public static void GetKeyPressed()
         {
             if (IsAdown)
-                Player.MoveLeft();
+                PlayerMovement.MoveLeft();
             if (IsWdown)
-                Player.MoveUp();
+                PlayerMovement.MoveUp();
             if (IsDdown)
-                Player.MoveRight();
+                PlayerMovement.MoveRight();
             if (IsSdown)
-                Player.MoveDown();
+                PlayerMovement.MoveDown();
+            if (IsRightDown)
+            {
+                Player.Shoot(true, 18);
+            }
+            else if (IsLeftDown)
+            {
+                Player.Shoot(true, -18);
+            }
+            else if (IsUpDown)
+            {
+                Player.Shoot(false, -18);
+            }
+            else if(IsBotDown)
+            {
+                Player.Shoot(false, 18);
+            }
         }
     }
 }

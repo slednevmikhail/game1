@@ -3,10 +3,27 @@ using System.Drawing;
 
 namespace RglGame
 {
-    public static class RoomSamples
+    public static partial class RoomSamples
     {
         public static List<List<Rectangle>> WallSamples = new List<List<Rectangle>>
         {
+            new List<Rectangle>()
+            {
+            },
+            new List<Rectangle>()
+            {
+                new Rectangle(240, -140, 60 , 200),
+                new Rectangle(-100, -110, 60 , 200),
+                new Rectangle(-290, -110, 60 , 200),
+                new Rectangle(-40, -10, 80 , 80),
+            },
+            new List<Rectangle>()
+            {
+                new Rectangle(240, -140, 60 , 200),
+                new Rectangle(-100, -110, 60 , 200),
+                new Rectangle(-290, -110, 60 , 200),
+                new Rectangle(-40, -10, 80 , 80),
+            },
             new List<Rectangle>()
             {
                 new Rectangle(240, -140, 60 , 200),

@@ -6,4 +6,10 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="IT-Dev-Tycoon\**" />
+    <EmbeddedResource Remove="IT-Dev-Tycoon\**" />
+    <None Remove="IT-Dev-Tycoon\**" />
+  </ItemGroup>
+
 </Project>
