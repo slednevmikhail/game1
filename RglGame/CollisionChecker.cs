@@ -26,7 +26,7 @@ namespace RglGame
             foreach (var door in Player.CurrentRoom.Doors)
                 if (door.Item1.IntersectsWith(hitbox) && Player.CurrentRoom.isCleared)
                 {
-                    if (!door.Item2.IsBoss || World.ClearedRooms.Count == World.Rooms.Count - 2)
+                    if (!door.Item2.IsBoss || World.ClearedRooms.Count >= World.Rooms.Count - 2)
                     {
                         Player.ChangeRoom(door.Item2);
                         World.ClearedRooms.Add(Player.CurrentRoom.coord);
