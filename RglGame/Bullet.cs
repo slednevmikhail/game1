@@ -6,57 +6,74 @@ namespace RglGame
 {
     public class Bullet
     {
+        public int SaveSpeed;
         public bool IsHit;
-        public bool movementMode;
-        public static Size size = new Size(10, 10);
-        public int speed;
-        public Rectangle hitbox = new Rectangle();
-        public static int shootTiming = 0;
-        public static int shootCooldown = 13;
-        public Bullet(Rectangle spawnCoord, bool isX, int speed)
+        public bool MovementMode;
+        public int Speed;
+        public Rectangle Target;
+        public Rectangle Hitbox = new Rectangle();
+        public bool IsEnemyTarget;
+        public Bullet(Rectangle spawnCoord, bool isX, int speed, bool isEnemyTarget)
         {
-            if (Player.CurrentRoom.roomTimer - shootTiming > shootCooldown)
-            {
-                this.speed = speed;
-                hitbox = spawnCoord;
-                movementMode = isX;
-                shootTiming = Player.CurrentRoom.roomTimer;               
-            }
+            this.Speed = speed;
+            Hitbox = spawnCoord;
+            MovementMode = isX;
+            this.IsEnemyTarget = isEnemyTarget;
         }
         public void MoveBullet()
         {
-            if (movementMode)
-                hitbox.X += speed;
-            else
-                hitbox.Y += speed;
+            if (!TimeFreezeAbility.IsActive)
+            {
+                if (MovementMode)
+                    Hitbox.X += Speed;
+                else
+                    Hitbox.Y += Speed;
+            }
 
         }
         public static void ControlBullets(List<Bullet> bullets)
         {
+            var indexesToRemove = new List<int>();
             for (int i = 0; i < bullets.Count; i++)
             {
                 bullets[i].MoveBullet();
                 bullets[i].ControlHit(Player.CurrentRoom , i);
-                if (bullets[i].IsHit || !CollisionChecker.IsInsideRoom(bullets[i].hitbox.X, bullets[i].hitbox.Y, bullets[i].hitbox)
-                    || CollisionChecker.IsIntersectsWalls(bullets[i].hitbox.X, bullets[i].hitbox.Y, bullets[i].hitbox))
+                if (bullets[i].IsHit || !CollisionChecker.IsInsideRoom(bullets[i].Hitbox.X, bullets[i].Hitbox.Y, bullets[i].Hitbox)
+                    || (CollisionChecker.IsIntersectsWalls(bullets[i].Hitbox.X, bullets[i].Hitbox.Y, bullets[i].Hitbox) && bullets[i].IsEnemyTarget))
                 {
-                    Player.CurrentRoom.roomBullets.RemoveAt(i);
+                    indexesToRemove.Add(i - indexesToRemove.Count);
                 }
+            }
+            foreach (var i in indexesToRemove)
+            {
+                Player.CurrentRoom.RoomBullets.RemoveAt(i);
             }
         }
         public void ControlHit(Room currentRoom, int bulletIndex)
         {
-            for (int i = 0; i < currentRoom.Enemies.Count; i++)
-                if (hitbox.IntersectsWith(currentRoom.Enemies[i].hitbox))
+            if (IsEnemyTarget)
+            {
+                for (int i = 0; i < currentRoom.Enemies.Count; i++)
+                    if (Hitbox.IntersectsWith(currentRoom.Enemies[i].Hitbox))
+                    {
+                        if (!IsHit)
+                        {
+                            currentRoom.Enemies[i].GetDamage(MovementMode, this);
+                            IsHit = true;
+                            if (Player.HitCount < 15)
+                                Player.HitCount++;
+                        }
+                    }
+            }
+            else if (!IsHit)
+            {
+                if (Hitbox.IntersectsWith(Player.Hitbox) && !Player.IsInvincible)
                 {
-                    if (movementMode)
-                    currentRoom.Enemies[i].hitbox.X += 10 * speed.CompareTo(0);
-                    else
-                    currentRoom.Enemies[i].hitbox.Y += 10 * speed.CompareTo(0);
-
-                    currentRoom.Enemies[i].GetDamage();
+                    Player.GetDamage();
+                    Player.Hitbox.Y += 10;
                     IsHit = true;
                 }
+            }
         }
     }
 }

@@ -7,8 +7,8 @@ namespace RglGame
     {
         public static bool IsInsideRoom(int x, int y, Rectangle hitbox)
         {
-            return Player.CurrentRoom.bounds.Left <= x && Player.CurrentRoom.bounds.Right >= x + hitbox.Width
-                && Player.CurrentRoom.bounds.Top <= y && Player.CurrentRoom.bounds.Bottom >= y + hitbox.Height;
+            return Player.CurrentRoom.Bounds.Left <= x && Player.CurrentRoom.Bounds.Right >= x + hitbox.Width
+                && Player.CurrentRoom.Bounds.Top <= y && Player.CurrentRoom.Bounds.Bottom >= y + hitbox.Height;
         }
         public static bool IsIntersectsWalls(int x, int y, Rectangle hitbox, Room room = null)
         {
@@ -25,18 +25,13 @@ namespace RglGame
         {
             foreach (var door in Player.CurrentRoom.Doors)
                 if (door.Item1.IntersectsWith(hitbox) && Player.CurrentRoom.isCleared)
+                {
+                    if (!door.Item2.IsBoss || World.ClearedRooms.Count == World.Rooms.Count - 1)
+                    {
                         Player.ChangeRoom(door.Item2);
+                        World.ClearedRooms.Add(Player.CurrentRoom.coord);
+                    }
+                }
         }
-        //public static bool IsIntersectsEnemies(int x, int y, Rectangle hitbox)
-        //{
-        //    foreach (var e in Player.CurrentRoom.Enemies)
-        //    {
-        //        if (e.hitbox.Left <= x + hitbox.Width
-        //            && e.hitbox.Right >= x
-        //            && e.hitbox.Top <= y + hitbox.Height && e.hitbox.Bottom >= y)
-        //            return true;
-        //    }
-        //    return false;
-        //}
     };
 }

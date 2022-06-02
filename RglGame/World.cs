@@ -10,7 +10,9 @@ namespace RglGame
 {
     public static class World
     {
+        public static bool GameStarted;
         public static List<Room> Rooms = new List<Room> { new Room(0) };
+        public static HashSet<int> ClearedRooms = new HashSet<int> { 0 , 1 };
         public static void GenerateRooms(int RoomsCount)
         {
             var rnd = new Random();
@@ -32,10 +34,17 @@ namespace RglGame
         {
             GenerateRooms(8);
             ConnectRooms();
+            SetBossRoom();
             GenerateEntities(8);
             Player.CurrentRoom = Rooms[0];
-            for (int i = 1; i< Rooms.Count; i++)
-                Rooms[i].SpawnEnemies();
+            for (int i = 1; i < Rooms.Count; i++)
+            {
+                if (!Rooms[i].IsBoss)
+                {
+                    Rooms[i].SpawnEnemies();
+                }
+                else Rooms[i].SpawnBoss();
+            }
         }
         public static void ConnectRooms()
         {
@@ -52,9 +61,25 @@ namespace RglGame
         {
             for (int i = 0; i <= amount; i++)
             {
-                Rooms[i].Walls = RoomSamples.WallSamples[i];
-                Rooms[i].GetDoorRects();
+                if (!Rooms[i].IsBoss)
+                {
+                    Rooms[i].Walls = RoomSamples.WallSamples[i];
+                    Rooms[i].GetDoorRects();
+                }
             }
+        }
+        public static void SetBossRoom()
+        {
+            int furtherRoomIndex= 0;
+            for (int i = 0; i < Rooms.Count; i++)
+            {
+                if (Math.Abs(Rooms[i].coord/10 + Rooms[i].coord%10) > 
+                    Math.Abs(Rooms[furtherRoomIndex].coord/10 + Rooms[furtherRoomIndex].coord%10))
+                {
+                    furtherRoomIndex = i;
+                }
+            }
+            Rooms[furtherRoomIndex].IsBoss = true;
         }
     };
 
