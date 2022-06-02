@@ -45,10 +45,6 @@ namespace RglGame
                 args.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
                 args.Graphics.TranslateTransform(centerX, centerY);
                 DrawScene(args, World.GameStarted);
-                //DrawManual(args);
-                //DrawRoom(args, pen, Player.CurrentRoom);
-                //DrawBullets(args, bulletPen, Player.CurrentRoom);
-                //DrawPlayer(args);
                 args.Graphics.ResetTransform();
                 args.Graphics.DrawString("Здоровье: " + Player.health.ToString(), new Font("Arial", 16), Brushes.Red, new Point(0, 10));
                 args.Graphics.DrawString("Способность:" + Player.HitCount.ToString() + "/15", new Font("Arial", 16), Brushes.Black, new Point(150, 10));
@@ -114,7 +110,7 @@ namespace RglGame
                 {
                     if (door.Item2.IsBoss)
                     {
-                        if (World.ClearedRooms.Count < 8)
+                        if (World.ClearedRooms.Count < 7)
                             args.Graphics.DrawRectangle(Pens.Red, door.Item1);
                         else
                             args.Graphics.FillRectangle(Brushes.Red, door.Item1);

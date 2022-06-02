@@ -300,7 +300,7 @@ namespace RglGame
                     PhaseFlags[3] = true;
                 }
             }
-            if (Health == 1)
+            if (Health <= 2)
             {
                 if (PhaseFlags[3])
                 {

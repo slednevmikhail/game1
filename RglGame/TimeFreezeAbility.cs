@@ -27,6 +27,7 @@ namespace RglGame
         {
             if (IsActive && CurrentTime - ActivationTime > Duration)
             {
+                Player.IsInvincible = false;
                 IsActive = false;
                 MarkedEnemies = new List<Enemy>();
                 foreach (var e in Player.CurrentRoom.Enemies)
