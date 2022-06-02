@@ -280,7 +280,7 @@ namespace RglGame
                 }
                 AttackPhaseTwo();                
             }
-            if (Health <= 22 && Health > 1)
+            if (Health <= 22 && Health > 2)
             {
                 if (!PhaseFlags[2])
                 {
